@@ -12,14 +12,38 @@ $(document).ready(function () {
             value: i,
             text: i
         }));
-
-
     }
+
+    //Genera la lista de empresas para agregar al filtro desde la fuente CSV
+    let empresas = [];
+    d3.csv('datos.csv').then(function (datos) {
+        //Agrega cada nombre de empresa unico a un array y luego lo ordena
+        datos.forEach(d => {
+            let nombre = d['Nombre'];
+            if (!empresas.includes(nombre)) {
+                empresas.push(nombre);
+            }
+        });
+        empresas.sort();
+
+        //Agrega las empresas al componente de filtro
+        empresas.forEach(e => {
+            $('#filter').append($('<option>', {
+                value: e,
+                text: e
+            }));
+        });
+    });
+
+
     $("#init_date").val(1994)
     $("#finish_date").val(2020)
+    $("#top_n").val(12)
     $("#btn_graficar").on('click', graficar)
     
-
+    $('input.floatNumber').on('input', function() {
+        this.value = this.value.replace(/[^0-9.]/g,'').replace(/(\..*)\./g, '$1');
+    });
 })
 
 function graficar(){
@@ -36,10 +60,22 @@ function graficar(){
   //Alternativa para ingresar dato
   var yearinicio;
   var yearfin;
+  let selection = [];
   yearinicio =  parseInt($("#init_date").val())
   yearfin = parseInt($("#finish_date").val())
+  selection = $('#filter').val();
+  let top_n_value = parseInt($('#top_n').val())
+  top_n = top_n_value > 0 ? top_n_value : top_n;
 
-  
+  //Agregar tooltip
+  let tip = d3.tip()
+  .attr('class', 'd3-tip')
+  .offset([-10, 0])
+  .html(function(d) {
+    return "<strong>Frequency:</strong> <span style='color:red'>" + d.frequency + "</span>";
+  })
+
+  svg.call(tip);
 
   const margin = {
       top: 80,
@@ -51,7 +87,7 @@ function graficar(){
   let title = svg.append('text')
       .attr('class', 'title')
       .attr('y', 24)
-      .html('Top 12, Ingresos de las empresas de comunicaciones en Perú');
+      .html('Top '+top_n+', Ingresos de las empresas de comunicaciones en Perú');
   let subTitle = svg.append("text")
       .attr("class", "subTitle")
       .attr("y", 55)
@@ -79,6 +115,10 @@ function graficar(){
     
   d3.csv('datos.csv').then(function (datos) {
       console.log(datos);
+      //Filtrar solamente las empresas seleccionadas, si no hay ninguna seleccionada, muestre todas
+      if (selection.length>0) {
+        datos = datos.filter(d=>selection.includes(d['Nombre']));
+      }
 
       //Asignacion de colores para empresas conocidas
       datos.forEach(d => {
@@ -188,7 +228,9 @@ function graficar(){
           .attr('width', d => x(d.value)- x(0) - 1)
           .attr('y', d => y(d.rank) + 5)
           .attr('height', y(1) - y(0) - barPadding)
-          .style('fill', d => d.colour);
+          .style('fill', d => d.colour)
+          .on('mouseover', tip.show)
+          .on('mouseout', tip.hide);
 
       //agregar los nombres iniciales
       svg.selectAll('text.label')
