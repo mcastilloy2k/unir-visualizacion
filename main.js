@@ -67,15 +67,6 @@ function graficar(){
   let top_n_value = parseInt($('#top_n').val())
   top_n = top_n_value > 0 ? top_n_value : top_n;
 
-  //Agregar tooltip
-  let tip = d3.tip()
-  .attr('class', 'd3-tip')
-  .offset([-10, 0])
-  .html(function(d) {
-    return "<strong>Frequency:</strong> <span style='color:red'>" + d.frequency + "</span>";
-  })
-
-  svg.call(tip);
 
   const margin = {
       top: 80,
@@ -87,7 +78,7 @@ function graficar(){
   let title = svg.append('text')
       .attr('class', 'title')
       .attr('y', 24)
-      .html('Top '+top_n+', Ingresos de las empresas de comunicaciones en Perú');
+      .html(`Top ${top_n}, Ingresos de las empresas de comunicaciones en Perú`);
   let subTitle = svg.append("text")
       .attr("class", "subTitle")
       .attr("y", 55)
@@ -227,10 +218,10 @@ function graficar(){
           .attr('x', x(0) + 1)
           .attr('width', d => x(d.value)- x(0) - 1)
           .attr('y', d => y(d.rank) + 5)
-          .attr('height', y(1) - y(0) - barPadding)
+          .attr('height', y(1) - y(0) - barPadding) 
           .style('fill', d => d.colour)
-          .on('mouseover', tip.show)
-          .on('mouseout', tip.hide);
+          .append('title')
+          .text((d) => `${d3.format(",.2f")(d.value)} millones en ${d.year}`);
 
       //agregar los nombres iniciales
       svg.selectAll('text.label')
@@ -286,10 +277,12 @@ function graficar(){
               .append('rect')
               .attr('class', d => `bar ${d.name.replace(/\s/g, '_')}`)
               .attr('x', x(0) + 1)
-              .attr('width', d => x(d.value) - x(0) - 1 )
+              .attr('width', d => { let w = x(d.value) - x(0) - 1; return w>0?w:0})
               .attr('y', d => y(top_n + 1) + 5)
               .attr('height', y(1) - y(0) - barPadding)
               .style('fill', d => d.colour)
+              .append('title')
+              .text((d) => `${d3.format(",.2f")(d.value)} millones en ${d.year}`)
               .transition()
               .duration(tickDuration)
               .ease(d3.easeLinear)
@@ -298,14 +291,14 @@ function graficar(){
               .transition()
               .duration(tickDuration)
               .ease(d3.easeLinear)
-              .attr('width', d => x(d.value) - x(0) - 1 )
+              .attr('width', d => { let w = x(d.value) - x(0) - 1; return w>0?w:0})
               .attr('y', d => y(d.rank) + 5);
           bars
               .exit()
               .transition()
               .duration(tickDuration)
               .ease(d3.easeLinear)
-              .attr('width', d => x(d.value) - x(0) - 1 )
+              .attr('width', d => { let w = x(d.value) - x(0) - 1; return w>0?w:0})
               .attr('y', d => y(top_n + 1) + 5)
               .remove();
 
