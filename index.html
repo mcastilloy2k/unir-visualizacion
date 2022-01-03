@@ -7,7 +7,7 @@
 
     <title>Trabajo 1 - Group 24</title>
 
-    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
     <script src="https://code.highcharts.com/highcharts.js"></script>
     <script src="https://code.highcharts.com/stock/modules/data.js"></script>
 
@@ -27,6 +27,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.17/js/bootstrap-select.min.js"></script>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="stackchart.js"></script>
     <script src="main.js"></script>
     <link rel="stylesheet" href="style.css">
 
@@ -46,12 +47,12 @@
                             aria-controls="home" aria-selected="true">Ingresos <i class="fas fa-hand-holding-usd"></i></a>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab"
-                            aria-controls="profile" aria-selected="false">Profile</a>
+                        <a class="nav-link" id="stack-tab" data-toggle="tab" href="#stack" role="tab"
+                            aria-controls="stack" aria-selected="false"> Ingresos anuales <i class="fas fa-hand-holding-usd"></i></a>
                     </li>
                     <li class="nav-item" role="presentation">
                         <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab"
-                            aria-controls="contact" aria-selected="false">Contact</a>
+                            aria-controls="contact" aria-selected="false">Contact <i class="fas fa-hand-holding-usd"></i></a>
                     </li>
                 </ul>
             </div>
@@ -63,7 +64,7 @@
                     <div class="row ">
                         <div class="col-12">
                             <h1 class="text-center">
-                                Telefónicas de Perú
+                                Telefónicas de Perú por Ingresos
                             </h1>
                         </div>
                     </div>
@@ -116,7 +117,54 @@
                     </div>
                 </div>
             </div>
-            <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">...</div>
+            <div class="tab-pane fade" id="stack" role="tabpanel" aria-labelledby="stack-tab">
+                <div class="container">
+                    <div class="row ">
+                        <div class="col-12">
+                            <h1 class="text-center">
+                                Ingresos por año
+                            </h1>
+                        </div>
+                    </div>
+                    <div class="row row-cols-4">
+                        <div class="col">
+                            <label for="">Fecha Inicio</label>
+                        </div>
+                        <div class="col">
+                            <label for="">Fecha Fin</label>
+                        </div>
+                        <div class="col">
+                            <label for="">Empresas Telefonicas</label>
+                        </div>
+
+                    </div>
+                    <div class="row row-cols-4">
+                        <div class="form-group  col">
+                            <select class="selectpicker" id="init_date_stack" data-live-search="true">
+                              
+                            </select>
+                        </div>
+                        <div class="form-group  col">
+                            <select class="selectpicker" id="finish_date_stack" data-live-search="true">
+                              
+                            </select>
+                        </div>
+                        <div class="form-group  col">
+                            <select class="selectpicker" id="filter_stack" data-live-search="true" multiple title="Todas">
+                            </select>
+                        </div>
+                        <div class="col">
+                            <button id="btn_graficar_stacked" class="btn btn-primary mb-2" onclick="plotStackedGraph()">Graficar</button>
+                        </div>
+                    </div>
+
+
+                    <div id="parentContainer-stacked-chart">
+                        <div id="container-stacked-chart"></div>
+                        
+                    </div>
+                </div>
+            </div>
             <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">...</div>
         </div>
     </div>
