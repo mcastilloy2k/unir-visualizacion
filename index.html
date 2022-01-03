@@ -27,33 +27,31 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.17/js/bootstrap-select.min.js"></script>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <script src="stackchart.js"></script>
-    <script src="main.js"></script>
+    <script src="js/main.js"></script>
     <link rel="stylesheet" href="style.css">
 
 </head>
 
-<body >
+<body>
     <div class="container">
         <nav class="navbar navbar-expand-lg navbar-light ">
             <a class="navbar-brand" href="#">
                 <img src="img/Logo_UNIR.png" width="200" height="100" alt="">
-              </a>
+            </a>
             <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
 
                 <ul class="nav nav-tabs " id="myTab" role="tablist">
                     <li class="nav-item" role="presentation">
                         <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab"
-                            aria-controls="home" aria-selected="true">Ingresos <i class="fas fa-hand-holding-usd"></i></a>
+                            aria-controls="home" aria-selected="true">Race-bar Ingresos <i
+                                class="fas fa-hand-holding-usd"></i></a>
                     </li>
                     <li class="nav-item" role="presentation">
                         <a class="nav-link" id="stack-tab" data-toggle="tab" href="#stack" role="tab"
-                            aria-controls="stack" aria-selected="false"> Ingresos anuales <i class="fas fa fa-area-chart "></i></a>
+                            aria-controls="stack" aria-selected="false" onclick="plotStackedGraph()">Stack-bar Ingresos<i
+                                class="fas fa fa-area-chart "></i></a>
                     </li>
-                    <li class="nav-item" role="presentation">
-                        <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab"
-                            aria-controls="contact" aria-selected="false">Contact <i class="fas fa-hand-holding-usd"></i></a>
-                    </li>
+                    
                 </ul>
             </div>
 
@@ -75,9 +73,9 @@
                         <div class="col">
                             <label for="">Fecha Fin</label>
                         </div>
-                        <div class="col">
+                        <!-- <div class="col">
                             <label for="">Empresas Telefonicas</label>
-                        </div>
+                        </div> -->
                         <div class="col">
                             <label for="">Resultados Top</label>
                         </div>
@@ -86,25 +84,28 @@
                     <div class="row row-cols-5 ">
                         <div class="form-group  col">
                             <select class="selectpicker" id="init_date" data-live-search="true">
-                              
+
                             </select>
                         </div>
                         <div class="form-group  col">
                             <select class="selectpicker" id="finish_date" data-live-search="true">
-                              
+
                             </select>
                         </div>
-                        <div class="form-group  col">
+                        <!-- <div class="form-group  col">
                             <select class="selectpicker" id="filter" data-live-search="true" multiple title="Todas">
                             </select>
-                        </div>
+                        </div> -->
                         <div class="form-group  col">
-                            <input class="form-control float-number" id="top_n" type="number" step="1" max="100" min="1" required>
+                            <input class="form-control float-number" id="top_n" type="number" step="1" max="100" min="1"
+                                required>
                             </input>
                         </div>
                         <div class="col">
                             <button id="btn_graficar" class="btn btn-primary mb-2 ">Graficar</button>
+
                         </div>
+
                     </div>
 
 
@@ -128,44 +129,32 @@
                     </div>
                     <div class="row row-cols-4">
                         <div class="col">
-                            <label for="">Fecha Inicio</label>
-                        </div>
-                        <div class="col">
-                            <label for="">Fecha Fin</label>
-                        </div>
-                        <div class="col">
                             <label for="">Empresas Telefonicas</label>
                         </div>
-
                     </div>
                     <div class="row row-cols-4">
                         <div class="form-group  col">
-                            <select class="selectpicker" id="init_date_stack" data-live-search="true">
-                              
-                            </select>
-                        </div>
-                        <div class="form-group  col">
-                            <select class="selectpicker" id="finish_date_stack" data-live-search="true">
-                              
-                            </select>
-                        </div>
-                        <div class="form-group  col">
-                            <select class="selectpicker" id="filter_stack" data-live-search="true" multiple title="Todas">
+                            <select class="selectpicker" id="filter_stack" data-live-search="true" multiple
+                                title="Todas">
                             </select>
                         </div>
                         <div class="col">
-                            <button id="btn_graficar_stacked" class="btn btn-primary mb-2" onclick="plotStackedGraph()">Graficar</button>
+                            <button id="btn_graficar_stacked" class="btn btn-primary mb-2">Graficar</button>
+                        </div>
+                    </div>
+                    <div class="row row-cols-12">
+                        <div class="col" id="labels_filter">                           
                         </div>
                     </div>
 
 
                     <div id="parentContainer-stacked-chart">
                         <div id="container-stacked-chart"></div>
-                        
+
                     </div>
                 </div>
             </div>
-            <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">...</div>
+            
         </div>
     </div>
 
@@ -175,15 +164,15 @@
     <footer class="page-footer font-small bg-primary">
         <div class="text-light text-center py-3">
             Equipo 24
-          </div>
-
-       
-        <div class="text-light text-center py-3">
-          Marvin Francisco Castillo Barrera, Jonatan Walter Ponce Orellana, Jesus Antonio Tula Gonzalez
         </div>
-       
-      
-      </footer>
+
+
+        <div class="text-light text-center py-3">
+            Marvin Francisco Castillo Barrera, Jonatan Walter Ponce Orellana, Jesus Antonio Tula Gonzalez
+        </div>
+
+
+    </footer>
 
 
 </body>
