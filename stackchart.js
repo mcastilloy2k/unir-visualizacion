@@ -46,14 +46,14 @@ function prepareFiltersStack() {
 }
 
 function plotStackedGraph() {
-    // set the dimensions and margins of the graph
+    // COnfigura las dimensiones
     const margin = { top: 60, right: 230, bottom: 50, left: 100 },
         width = 1000 - margin.left - margin.right,
         height = 600 - margin.top - margin.bottom;
 
     $("#container-stacked-chart svg").remove()
 
-    // append the svg object to the body of the page
+    // Agrega el objecto SVG a la pagina
     const svg = d3.select("#container-stacked-chart")
         .append("svg")
         .attr("width", width + margin.left + margin.right)
@@ -62,14 +62,11 @@ function plotStackedGraph() {
         .attr("transform",
             `translate(${margin.left}, ${margin.top})`);
 
-    // Parse the Data
+    // Lee los datos del CSV agrupado
     d3.csv("datos-columnas.csv").then(function (data) {
 
-        //////////
-        // GENERAL //
-        //////////
 
-        // List of groups = header of the csv files
+        // Lista de empresas telefonicas a filtrar
         //const keys = data.columns.slice(1)
         keys = ['AMERICA MOVIL PERU', 'ENTEL PERU', 'TELEFONICA DEL PERU', 'VIETTEL PERU', 'DIRECTV PERU', 'CENTURYLINK PERU','OPTICAL NETWORKS','AMERICATEL PERU'];
 
@@ -78,20 +75,14 @@ function plotStackedGraph() {
             .domain(keys)
             .range(d3.schemeSet2);
 
-        //stack the data?
+        //Colocar datos en un stack
         const stackedData = d3.stack()
             .keys(keys)
             (data)
 
         console.log(stackedData)
 
-
-
-        //////////
-        // AXIS //
-        //////////
-
-        // Add X axis
+        // Agregar eje X
         const x = d3.scaleLinear()
             .domain(d3.extent(data, function (d) { return d.year; }))
             .range([0, width]);
@@ -99,14 +90,14 @@ function plotStackedGraph() {
             .attr("transform", `translate(0, ${height})`)
             .call(d3.axisBottom(x).ticks(5))
 
-        // Add X axis label:
+        // Agregar etiqueta eje X
         svg.append("text")
             .attr("text-anchor", "end")
             .attr("x", width)
             .attr("y", height + 40)
             .text("Año");
 
-        // Add Y axis label:
+        // Agregar etiquetas eje Y
         svg.append("text")
             .attr("text-anchor", "end")
             .attr("x", 0)
@@ -114,7 +105,7 @@ function plotStackedGraph() {
             .text("Ingresos en millones de S")
             .attr("text-anchor", "start")
 
-        // Add Y axis
+        // Agregar eje Y
         let maxValue = Math.ceil(d3.max(stackedData, s=>d3.max(s, e=>e[1]))/5000)*5000;
         const y = d3.scaleLinear()
             .domain([0, maxValue])
@@ -122,13 +113,7 @@ function plotStackedGraph() {
         svg.append("g")
             .call(d3.axisLeft(y).ticks(5))
 
-
-
-        //////////
-        // BRUSHING AND CHART //
-        //////////
-
-        // Add a clipPath: everything out of this area won't be drawn.
+        // Solo dibujar lo que esta en esta area
         const clip = svg.append("defs").append("svg:clipPath")
             .attr("id", "clip")
             .append("svg:rect")
@@ -137,31 +122,27 @@ function plotStackedGraph() {
             .attr("x", 0)
             .attr("y", 0);
 
-        // Add brushing
-        const brush = d3.brushX()                 // Add the brush feature using the d3.brush function
-            .extent([[0, 0], [width, height]]) // initialise the brush area: start at 0,0 and finishes at width,height: it means I select the whole graph area
-            .on("end", updateChart) // Each time the brush selection changes, trigger the 'updateChart' function
+        const brush = d3.brushX()                 
+            .extent([[0, 0], [width, height]]) 
+            .on("end", updateChart) 
 
-        // Create the scatter variable: where both the circles and the brush take place
         const areaChart = svg.append('g')
             .attr("clip-path", "url(#clip)")
 
-        // Area generator
+        // Generador de areas
         const area = d3.area()
             .x(function (d) { return x(d.data.year); })
             .y0(function (d) { return y(d[0]); })
             .y1(function (d) { return y(d[1]); })
 
-        // Show the areas
         areaChart
             .selectAll("mylayers")
             .data(stackedData)
             .join("path")
-            .attr("class", function (d) { return "myArea " + d.key })
+            .attr("class", function (d) { return "myArea " + d.key.replace(' ','_') })
             .style("fill", function (d) { return color(d.key); })
             .attr("d", area)
 
-        // Add the brushing
         areaChart
             .append("g")
             .attr("class", "brush")
@@ -170,7 +151,7 @@ function plotStackedGraph() {
         let idleTimeout
         function idled() { idleTimeout = null; }
 
-        // A function that update the chart for given boundaries
+        // Function para actualizar el chart
         function updateChart(event, d) {
 
             extent = event.selection
@@ -184,7 +165,7 @@ function plotStackedGraph() {
                 areaChart.select(".brush").call(brush.move, null) // This remove the grey brush area as soon as the selection has been done
             }
 
-            // Update axis and area position
+            // Actualizar ejes
             xAxis.transition().duration(1000).call(d3.axisBottom(x).ticks(5))
             areaChart
                 .selectAll("path")
@@ -192,32 +173,18 @@ function plotStackedGraph() {
                 .attr("d", area)
         }
 
-
-
-        //////////
-        // HIGHLIGHT GROUP //
-        //////////
-
-        // What to do when one group is hovered
+        // Resaltar cuando una empresa es seleccionada
         const highlight = function (event, d) {
-            // reduce opacity of all groups
             d3.selectAll(".myArea").style("opacity", .1)
-            // expect the one that is hovered
-            d3.select("." + d).style("opacity", 1)
+            d3.select("." + d.replace(' ','_')).style("opacity", 1)
         }
 
-        // And when it is not hovered anymore
+        // Regresar las areas a sus colores normales
         const noHighlight = function (event, d) {
             d3.selectAll(".myArea").style("opacity", 1)
         }
 
-
-
-        //////////
-        // LEGEND //
-        //////////
-
-        // Add one dot in the legend for each name.
+        // Agregar nombres de las empresas
         const size = 20
         svg.selectAll("myrect")
             .data(keys)
@@ -230,7 +197,7 @@ function plotStackedGraph() {
             .on("mouseover", highlight)
             .on("mouseleave", noHighlight)
 
-        // Add one dot in the legend for each name.
+        // Agregar puntos para las leyendas de las empresas
         svg.selectAll("mylabels")
             .data(keys)
             .join("text")

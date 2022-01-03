@@ -45,9 +45,9 @@ $(document).ready(function () {
         this.value = this.value.replace(/[^0-9.]/g,'').replace(/(\..*)\./g, '$1');
     });
 
-    $('#navbarSupportedContent').find('a').on('shown.bs.tab', function () {
+    /*$('#navbarSupportedContent').find('a').on('shown.bs.tab', function () {
         prepareFiltersStack();
-    });
+    });*/
 })
 
 function graficar(){
